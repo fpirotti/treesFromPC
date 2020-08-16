@@ -4,7 +4,7 @@ project(treesFromPC)
 find_package(PCL 1.9 REQUIRED)
 include_directories(include include/LASzip/include include/LASzip/dll)
 
-file(GLOB_RECURSE files src/*.c src/*.cpp include/*.h include/*.hpp )
+#file(GLOB_RECURSE files src/*.c src/*.cpp include/*.h include/*.hpp )
 
 
 add_library (laszip SHARED ${CMAKE_SOURCE_DIR}/LASzip/dll/laszip_api.c)
