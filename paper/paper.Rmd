@@ -72,6 +72,10 @@ Materials and method
 The work uses a voxel-based density distribution to initiate tree detection and successive segmentation and parameter definition.
 n octree structure and 
 
+The Point Cloud Library (PCL) [@Rusu2011] is used for point cloud analysis, and the LASZip library [@Isenburg2013] is used for reading LAS [@Loskot2008] and compressed LAZ  formats.
+
+Octrees are used to organize space. The supervoxel element is used from [@Papon2013]
+
 Here are two sample references: @Feynman1963118 [@Dirac1953888].
 
 References {#references .unnumbered}

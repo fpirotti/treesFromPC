@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
     laszip_get_point_pointer(laszip_reader, &point);
 
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 
     // Generate pointcloud data
@@ -107,11 +108,14 @@ int main(int argc, char *argv[])
     }
 
 
-    float resolution = 0.5f;
-    pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree (resolution);
+
+    pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree1m (1.0f); // low resolution
+    pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree (0.2f); // high resolution
 
     octree.setInputCloud (cloud);
+    octree1m.setInputCloud (cloud);
     octree.addPointsFromInputCloud ();
+    octree1m.addPointsFromInputCloud ();
 
     std::cerr << "coords: " << npoints << " " <<  std::endl;
     laszip_close_reader(laszip_reader);
@@ -128,7 +132,7 @@ int main(int argc, char *argv[])
     {
 
       size_t size = it1.getLeafContainer().getSize();
-      cout << "Size leaf :   " <<  size << endl;
+      if(size > 5) cout << "Size leaf :   " <<  size << endl;
       leafNodeCounter++;
     }
 
