@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
     int leafNodeCounter =0;
     for (auto it1 = octree.leaf_depth_begin(), it1_end = octree.leaf_depth_end(); it1 != it1_end; ++it1)
     {
+
       size_t size = it1.getLeafContainer().getSize();
       cout << "Size leaf :   " <<  size << endl;
       leafNodeCounter++;
