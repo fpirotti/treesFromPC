@@ -1,21 +1,18 @@
 ---
-title: Short Paper
+title: Extracting tree parameters from UAV lidar data.
 author:
-  - name: Alice Anonymous
-    email: alice@example.com
-    affiliation: Some Institute of Technology
-    footnote: 1
-  - name: Bob Security
-    email: bob@example.com
-    affiliation: Another University
-  - name: Cat Memes
-    email: cat@example.com
-    affiliation: Another University
-    footnote: 2
-  - name: Derek Zoolander
-    email: derek@example.com
-    affiliation: Some Institute of Technology
-    footnote: 2
+- affiliation: CIRGEO Interdepartmental Research Center of Research of Geomatics
+  corresponding: francesco.pirotti@unipd.it
+  email: francesco.pirotti@unipd.it
+  footnote: 1
+  name: Francesco Pirotti
+  orcid: 0000-0002-4796-6406
+- affiliation: TESAF Department
+  email: francesco.pirotti@unipd.it
+  footnote: 2
+  name: Francesco Pirotti
+  orcid: 0000-0002-4796-6406
+date: "`r Sys.Date()`"
 address:
   - code: Some Institute of Technology
     address: Department, Street, City, State, Zip
@@ -31,8 +28,7 @@ abstract: |
 
   It consists of two paragraphs.
 
-journal: "An awesome journal"
-date: "`r Sys.Date()`"
+journal: "An awesome journal" 
 bibliography: mybibfile.bib
 #linenumbers: true
 #numbersections: true
@@ -43,65 +39,38 @@ output: rticles::elsevier_article
 _Text based on elsarticle sample manuscript, see [http://www.elsevier.com/author-schemas/latex-instructions#elsarticle](http://www.elsevier.com/author-schemas/latex-instructions#elsarticle)_
 
 
-The Elsevier article class
+Introduction
 ==========================
 
 #### Installation
 
-If the document class *elsarticle* is not available on your computer,
-you can download and install the system package *texlive-publishers*
-(Linux) or install the LaTeX package *elsarticle* using the package
-manager of your TeX installation, which is typically TeX Live or MikTeX.
+Laser scanner data are becoming increasingly available and with larger volume. 
 
-#### Usage
+This is due to market-driven improvement of technology, making sensors lighter and more accurate.
 
-Once the package is properly installed, you can use the document class
-*elsarticle* to create a manuscript. Please make sure that your
-manuscript follows the guidelines in the Guide for Authors of the
-relevant journal. It is not necessary to typeset your manuscript in
-exactly the same way as an article, unless you are submitting to a
-camera-ready copy (CRC) journal.
+Terrestrial laser scanners (TLS) provide faster and more dense scans. Productivity has also increased due to light batteries and lighter sensors. Both factors allow more scans per day, thus surveying areas with a denser point cloud. 
 
-#### Functionality
+For some years now laser scanners are deployed on remotely piloted aircraft systems (RPAS), sometimes referred to as unmanned airborne vehicles (UAVs) or simply "drones". Normal aircrafts require a minimum relative flight height (RFH), usually arount 150 m above terrain. RFH is  lower for RPAS, depending on the national regulations, allowing a much denser point cloud. 
 
-The Elsevier article class is based on the standard article class and
-supports almost all of the functionality of that class. In addition, it
-features commands and options to format the
+For the reasons stated above, it is not uncommon for post-processing to deal with very dense point clouds and larger volumes of data.
 
--   document style
+Forestry has greatly benefitted from laser scanning technology, thanks to laser's ability to go "behind" foliage. This is possible due to gaps in the canopy, that allow laser signals to be only partially reflected and partially pass through to reach other objects "behind" the first. This is often referred to as "penetration" capability of laser scanners in canopies. When scanning vegetation cover from above, this allows a few laser signals to be reflected by the terrain surface. Having samples of the positions of points on the terrain surface is fundamental to estimate a digital terrain model (DTM), that is required for several other models. Hydrological modelling requires accurate DTM, as well as forest modelling uses the DTM and DSM to extract the normalized DSM (nDSM). The latter is also known as canopy height model (CHM) when only vegetation covers the area.
 
--   baselineskip
+Forest management fundamentally requires the spatial distribution of trees and information on their specites, height, diameter, volume and biomass. In the case of point clouds from laser scanning, the height can be measured with significant accuracy, depending on the density of points at bottom (DTM) and on the top of the canopy (DSM), in particular the tree apex.
 
--   front matter
+In the case of TLS, tree diameter can also be measured and the tree branch structure can be extracted by segmentation []. When laser scanning is done from aerial supports, such as RPAS or normal aircrafts, the height of the tree is more easily extracted. 
 
--   keywords and MSC codes
+As mentioned, new technologies allow for much denser datasets, in particular from RPAS: The high density dataset from aerial laser scanning becomes more similar to the common density of TLS scans. Of course the two tecnologies provide a different distribution of point density, due to the scan geometry.
 
--   theorems, definitions and proofs
+Fast and streamlined methods for extracting information from dense point clouds is a topic worth investigating. 
 
--   lables of enumerations
 
--   citation style and labeling.
-
-Front matter
-============
-
-The author names and affiliations could be formatted in two ways:
-
-(1) Group the authors per affiliation.
-
-(2) Use footnotes to indicate the affiliations.
-
-See the front matter of this document for examples. You are recommended
-to conform your choice to the journal you are submitting to.
-
-Bibliography styles
+ 
+Materials and method
 ===================
 
-There are various bibliography styles available. You can select the
-style of your choice in the preamble of this document. These styles are
-Elsevier styles based on standard styles like Harvard and Vancouver.
-Please use BibTeX to generate your bibliography and include DOIs
-whenever available.
+The work uses a voxel-based density distribution to initiate tree detection and successive segmentation and parameter definition.
+n octree structure and 
 
 Here are two sample references: @Feynman1963118 [@Dirac1953888].
 
