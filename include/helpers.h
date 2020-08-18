@@ -1,7 +1,7 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-
+#include <rangeimage.h>
 #include <laszip/laszip_api.h>
 
 #include <pcl/point_cloud.h>
@@ -120,7 +120,7 @@ bool iEndsWith(const std::string &str, const std::string &suffix) {
     return icompare(tstr, suffix);
 }
 
-vector<string> split(string str, vector<char> delimiters) {
+vector<string> splita(string str, vector<char> delimiters) {
 
     vector<string> tokens;
 
@@ -153,8 +153,18 @@ vector<string> split(string str, vector<char> delimiters) {
     return tokens;
 }
 
+string  aggregate(vector<string> v, string i="") {
+    std::string s;
+    for (const auto &piece : v) {
+        s += piece;
+        if( i !="") s += i;
+    }
+    return s;
+}
+
+
 vector<string> split(string str, char delimiter) {
-    return split(str, { delimiter });
+    return splita(str, { delimiter });
 }
 
 // see https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
