@@ -94,50 +94,16 @@ void
     pcl::PointCloud<pcl::PointXYZ> point_cloud;
 
     point_cloud = *cloud_ptr ;
-//    range_image.createFromPointCloudWithKnownSize ( point_cloud,
-//                                                    angular_resolution_x,
-//                                                    angular_resolution_y,
-//                                                    point_cloud_center,
-//                                                    point_cloud_radius);
-    // --------------------------------------------
-    // -----Open 3D viewer and add point cloud-----
-    // --------------------------------------------
-
-
-    pcl::visualization::PCLVisualizer viewer ("3D Viewer");
-    viewer.setBackgroundColor (1, 1, 1);
-    // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointWithRange> range_image_color_handler (range_image_ptr, 0, 0, 0);
-   // viewer.addPointCloud (range_image_ptr, range_image_color_handler, "range image");
-    //viewer.addCoordinateSystem (1.0f, "global");
-    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> point_cloud_color_handler (cloud_ptr, 150, 150, 150);
-    viewer.addPointCloud (cloud_ptr, "PC");
-    viewer.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "PC");
-    viewer.initCameraParameters ();
-    //setViewerPose(viewer, range_image.getTransformationToWorldSystem ());
-
+    pcl::visualization::CloudViewer viewer ("Simple Cloud Viewer");
+     viewer.showCloud (cloud_ptr);
+     while (!viewer.wasStopped ())
+     {
+     }
     // --------------------------
     // -----Show range image-----
     // --------------------------
     //pcl::visualization::RangeImageVisualizer range_image_widget ("Range image");
     // range_image_widget.showRangeImage (range_image);
 
-    //--------------------
-    // -----Main loop-----
-    //--------------------
-    while (!viewer.wasStopped ())
-    {
-
-       viewer.spinOnce ();
-      pcl_sleep (0.01);
-
-//      if (live_update)
-//      {
-//        scene_sensor_pose = viewer.getViewerPose();
-//        range_image.createFromPointCloud (point_cloud, angular_resolution_x, angular_resolution_y,
-//                                          pcl::deg2rad (360.0f), pcl::deg2rad (180.0f),
-//                                          scene_sensor_pose, pcl::RangeImage::LASER_FRAME, noise_level, min_range, border_size);
-//        range_image_widget.showRangeImage (range_image);
-//      }
-    }
   }
 

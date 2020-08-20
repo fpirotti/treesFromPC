@@ -62,7 +62,9 @@ In the case of TLS, tree diameter can also be measured and the tree branch struc
 
 As mentioned, new technologies allow for much denser datasets, in particular from RPAS: The high density dataset from aerial laser scanning becomes more similar to the common density of TLS scans. Of course the two tecnologies provide a different distribution of point density, due to the scan geometry.
 
-Fast and streamlined methods for extracting information from dense point clouds is a topic worth investigating. 
+Fast and streamlined methods for extracting information from dense point clouds is a topic that was investigated since point cloud have become available.
+
+
 
 
  

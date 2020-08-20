@@ -124,17 +124,20 @@ int main(int argc, char *argv[])
     double radius [3]= {0,0,0};
     double center [3]= {0,0,0};
 
-    int every = cloud->size () / 100;
+    int every = cloud->size () / 10;
     
     for (std::size_t i = 0; i < cloud->size (); ++i)
     {
 
-        if( i%every==0 ) pcl::console::print_highlight ("%1f...\n", (float)(i/every) );
+        if( i%every==0 ) pcl::console::print_highlight ("%.1f0%%...\n", (float)(i/every) );
         laszip_get_coordinates(laszip_reader, coordinates);
 
         (*cloud)[i].x = (float) (coordinates[0] - refCoordinates[0]);
         (*cloud)[i].y = (float) (coordinates[1] - refCoordinates[1]);
         (*cloud)[i].z = (float) (coordinates[2] - refCoordinates[2]);
+        coordinates[0]= (*cloud)[i].x;
+        coordinates[1]= (*cloud)[i].y;
+        coordinates[2]= (*cloud)[i].z;
 
         center[0] += (*cloud)[i].x;
         center[1] += (*cloud)[i].y;
@@ -146,6 +149,10 @@ int main(int argc, char *argv[])
 
 
         laszip_read_point(laszip_reader);
+
+        laszip_set_coordinates(laszip_writer, coordinates);
+        laszip_set_point(laszip_writer, point);
+        laszip_write_point(laszip_writer);
 
        // fprintf(stderr,"1 - x%f y%f z%f )\n" , (*cloud)[i].x, (*cloud)[i].y, (*cloud)[i].z);
     }
@@ -187,6 +194,7 @@ int main(int argc, char *argv[])
 
     std::cerr << "coords: " << npoints << " " <<  std::endl;
     laszip_close_reader(laszip_reader);
+    laszip_close_writer(laszip_writer);
 
     current_time = time(NULL) - current_time;
 
