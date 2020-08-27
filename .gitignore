@@ -72,3 +72,7 @@ Thumbs.db
 *.exe
 
 .Rproj.user
+/.vs
+/build/.vs
+/out/build
+*.ece2692

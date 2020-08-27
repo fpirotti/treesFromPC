@@ -20,6 +20,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+using namespace std;
+
 using std::ifstream;
 using std::ofstream;
 using std::ios;
@@ -33,16 +35,44 @@ using std::endl;
 using std::vector;
 using std::map;
 
+laszip_U8 version_major;
+laszip_U8 version_minor;
+laszip_U16 version_revision;
+laszip_U32 version_build;
+
+laszip_POINTER laszip_reader, laszip_writer;
+laszip_header* header;
+laszip_point* point;
+int colorScale;
+double coordinates[3];
+double refCoordinates[3];
+
+
+void log(string message, int type, bool exit) {
+    if (type == 0) pcl::console::print_error(message.c_str());
+    else if (type == 1) pcl::console::print_warn(message.c_str());
+    else  pcl::console::print_info(message.c_str());
+
+#ifdef _WIN32
+    if (exit) { system("pause"); }
+#endif
+
+};
+
+
+
+
+
 
 
 /**
  * from http://stackoverflow.com/questions/5840148/how-can-i-get-a-files-size-in-c
  */
-long filesize(string filename){
+long filesize(string filename) {
     struct stat stat_buf;
     int rc = stat(filename.c_str(), &stat_buf);
     return rc == 0 ? stat_buf.st_size : -1;
-}
+};
 
 
 ///**
@@ -207,5 +237,82 @@ static void dll_error(laszip_POINTER laszip)
     fprintf(stderr,"DLL ERROR MESSAGE: %s\n", error);
   }
 }
+
+
+
+
+void openAllLAS(std::string& path) {
+
+    std::string outpath;
+    pcl::console::print_error("LAS/LAZ file: %s\n", path.c_str());
+    vector<string> ss = split(path, '.');
+    ss.pop_back();
+    outpath = aggregate(ss).append("_out.laz");
+    pcl::console::print_error("output LAS/LAZ file: %s\n", outpath.c_str());
+
+    laszip_create(&laszip_reader);
+    laszip_create(&laszip_writer);
+
+    laszip_BOOL request_reader = 1;
+    laszip_request_compatibility_mode(laszip_reader, request_reader);
+    laszip_request_compatibility_mode(laszip_writer, request_reader);
+    laszip_BOOL is_compressed = iEndsWith(path, ".laz") ? 1 : 0;
+    laszip_BOOL is_compressed_writer = iEndsWith(outpath, ".laz") ? 1 : 0;
+    laszip_open_reader(laszip_reader, path.c_str(), &is_compressed);
+    laszip_open_writer(laszip_writer, outpath.c_str(), is_compressed_writer);
+
+
+    if (laszip_get_header_pointer(laszip_reader, &header))
+    {
+        log("DLL ERROR: getting header pointer from laszip reader\n", 0, true);
+        return;
+    }
+    if (laszip_set_header(laszip_writer, header))
+    {
+        log("DLL ERROR: getting header pointer from laszip writer\n", 0, true);
+        return;
+    }
+
+
+
+}
+
+void closeAllLAS() {
+
+    if (laszip_close_writer(laszip_writer))
+    {
+
+        log("DLL ERROR: closing laszip writer\n", 0, true);
+        return;
+    }
+
+    // destroy the writer
+
+    if (laszip_destroy(laszip_writer))
+    {
+        log("DLL ERROR: destroying laszip writer\n", 0, true);
+        return;
+    }
+
+    // close the reader
+
+    if (laszip_close_reader(laszip_reader))
+    {
+        log("DLL ERROR: closing laszip reader\n", 0, true);
+        return;
+    }
+
+    // destroy the reader
+
+    if (laszip_destroy(laszip_reader))
+    {
+        log("DLL ERROR: destroying laszip reader\n", 0, true);
+        return;
+    }
+
+
+
+}
+
 
 #endif // HELPERS_H

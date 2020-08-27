@@ -8,33 +8,9 @@
 #define LASCopyString strdup
 #endif
 
-#include <fstream>  // std::ofstream
-#include <algorithm> // std::copy
-#include <exception> // std::exception
-
-#include <pcl/io/pcd_io.h>
-#include <pcl/common/common.h>
-#include <pcl/console/parse.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h> 
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/segmentation/supervoxel_clustering.h>
-
-using namespace std;
-
-laszip_U8 version_major;
-laszip_U8 version_minor;
-laszip_U16 version_revision;
-laszip_U32 version_build;
-
-laszip_POINTER laszip_reader, laszip_writer;
-laszip_header* header;
-laszip_point* point;
-int colorScale;
-double coordinates[3];
-double refCoordinates[3];
 
 
+ 
 int main(int argc, char *argv[])
 {
 
@@ -42,63 +18,49 @@ int main(int argc, char *argv[])
     pcl::PCDWriter writer;
     std::stringstream ss;
     std::string  path;
-    std::string outpath;
     
     if (argc < 2)
     {
-      pcl::console::print_error ("Syntax is: %s <las-file> \n "
-                                   "..... \n"
-                                   "......\n", argv[0]);
-      return (1);
+        log("Syntax is: %s <las-file> \n "
+                                       "..... \n"
+                                       "......\n", 0, true);
+       
+         return (1);
     }
     
     //
     if(argc>0){
          path = std::string(argv[1]);
-         pcl::console::print_error ("LAS/LAZ file: %s\n", path.c_str());
-         vector<string> ss = split(path, '.');
-         ss.pop_back();
-         outpath =  aggregate(ss).append("_out.laz");
-         pcl::console::print_error ("output LAS/LAZ file: %s\n", outpath.c_str());
     }
     else {
-        return -1;
+        log("??????????????", 0, true);
+         return -1;
     }
 
     if (laszip_load_dll())
     {
-      fprintf(stderr,"DLL ERROR: loading LASzip DLL\n");
-      return -1;
+        log("DLL ERROR: loading LASzip DLL\n", 0, true);
+        return -1;
     }
 
     // get version of LASzip DLL
 
     if (laszip_get_version(&version_major, &version_minor, &version_revision, &version_build))
     {
-      fprintf(stderr,"DLL ERROR: getting LASzip DLL version number\n");
+      log("DLL ERROR: getting LASzip DLL version number\n", 0, true);
       return -1;
     }
 
     fprintf(stderr,"LASzip DLL v%d.%d r%d (build %d)\n", (int)version_major, (int)version_minor, (int)version_revision, (int)version_build);
-
-
-    laszip_create(&laszip_reader);
-    laszip_create(&laszip_writer);
-
-    laszip_BOOL request_reader = 1;
-    laszip_request_compatibility_mode(laszip_reader, request_reader);
-    laszip_request_compatibility_mode(laszip_writer, request_reader);
-    laszip_BOOL is_compressed = iEndsWith(path, ".laz") ? 1 : 0;
-    laszip_BOOL is_compressed_writer = iEndsWith(outpath, ".laz") ? 1 : 0;
-    laszip_open_reader(laszip_reader, path.c_str(), &is_compressed);
-    laszip_open_writer(laszip_writer, outpath.c_str(), is_compressed_writer);
-
-    laszip_get_header_pointer(laszip_reader, &header);
+    
+    
+    openAllLAS(path);
 
     long long npoints = (header->number_of_point_records ? header->number_of_point_records : header->extended_number_of_point_records);
 
     laszip_get_point_pointer(laszip_reader, &point);
 
+ 
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 
@@ -118,18 +80,18 @@ int main(int argc, char *argv[])
     // grab first coordinate and then make all other coordinates relative to that
     laszip_get_coordinates(laszip_reader, refCoordinates);
     
-    pcl::console::print_highlight ("Reading LAS/LAZ cloud...\n");
+    pcl::console::print_highlight ("Reading %d points from LAS/LAZ cloud...\n", npoints);
     
     Eigen::Vector3f center_eigen;
     double radius [3]= {0,0,0};
     double center [3]= {0,0,0};
 
-    int every = cloud->size () / 10;
+    int every = cloud->size () / 100;
     
     for (std::size_t i = 0; i < cloud->size (); ++i)
     {
 
-        if( i%every==0 ) pcl::console::print_highlight ("%.1f0%%...\n", (float)(i/every) );
+        if( i%every==0 ) pcl::console::print_highlight ("\r%.1f%%...", (float)(i/every) );
         laszip_get_coordinates(laszip_reader, coordinates);
 
         (*cloud)[i].x = (float) (coordinates[0] - refCoordinates[0]);
@@ -138,7 +100,7 @@ int main(int argc, char *argv[])
         coordinates[0]= (*cloud)[i].x;
         coordinates[1]= (*cloud)[i].y;
         coordinates[2]= (*cloud)[i].z;
-
+         
         center[0] += (*cloud)[i].x;
         center[1] += (*cloud)[i].y;
         center[2] += (*cloud)[i].z;
@@ -241,8 +203,11 @@ int main(int argc, char *argv[])
     rangeImage *myviewer = new rangeImage();
     myviewer->view(s_point_cloud_ptr, center_eigen, (float)(radius[0]));
 
-    
-    
+    #ifdef _WIN32
+        system("pause");
+    #endif
+
+ 
 
     return 0;
 }
@@ -250,7 +215,6 @@ int main(int argc, char *argv[])
 void help(){
 
 }
-
 
 int las2pcl()
 {
